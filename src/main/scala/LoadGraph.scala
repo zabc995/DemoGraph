@@ -1,12 +1,8 @@
 
-import java.util
-
-import com.orientechnologies.orient.core.db.document.{ODatabaseDocument, ODatabaseDocumentTx}
+import com.orientechnologies.orient.core.db.document.{ODatabaseDocumentTx}
 import com.orientechnologies.orient.core.id.{ORID, ORecordId}
-import com.orientechnologies.orient.core.record.OVertex
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.{OConcurrentLegacyResultSet, OSQLSynchQuery}
-import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.graphx.{Edge, Graph}
@@ -19,7 +15,9 @@ object LoadGraph {
 
     var graph: Graph[(Short,Float),Byte] = null
 
-    val uri: String = "plocal:/databases/test"
+    val uri: String = "plocal:/Users/zNedu/Desktop/orientdb-3.0.10/databases/New"
+    //"remote:localhost/New"
+
     val factory: OrientGraphFactory = new OrientGraphFactory(uri)
     val ograph = factory.getTx
 
@@ -79,6 +77,7 @@ object LoadGraph {
         edgeRDD = edgeRDD ++ sc.parallelize(list)
         resultSet = db.query(query,last)
       }*/
+
       //Tạo Graph
       graph = Graph(vertexRDD,edgeRDD)
     }

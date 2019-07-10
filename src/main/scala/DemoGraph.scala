@@ -1,17 +1,8 @@
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
-import com.orientechnologies.orient.core.id.{ORID, ORecordId}
 import com.orientechnologies.orient.core.metadata.schema.{OClass, OType}
-import com.orientechnologies.orient.core.record.impl.ODocument
-import com.orientechnologies.orient.core.sql.OCommandSQL
-import com.orientechnologies.orient.core.sql.query.{OConcurrentLegacyResultSet, OSQLSynchQuery}
 import com.tinkerpop.blueprints.impls.orient._
-import com.tinkerpop.blueprints.{Direction, Edge, Parameter, Vertex}
+import com.tinkerpop.blueprints.{Edge, Parameter, Vertex}
 import org.apache.spark.SparkContext
-import org.apache.spark.graphx.Graph
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
-
-import scala.collection.JavaConverters._
 import scala.io.Source
 
 object DemoGraph extends App {
@@ -101,14 +92,19 @@ object DemoGraph extends App {
   override def main(args: Array[String]): Unit = {
     println("Begin creating the graph ...")
 
-    val uri: String = "plocal:/databases/test"
+    val uri: String = "plocal:/Users/zNedu/Desktop/orientdb-3.0.10/databases/New"
     val factory: OrientGraphFactory = new OrientGraphFactory(uri)
     factory.setStandardElementConstraints(false)
-    val graph: OrientGraph = factory.getTx
+    val graph: OrientGraph = factory.getTx()
 
     val sparkSS: SparkSession = SparkSession.builder()
-      .appName("App").config("spark.master","local[*]").getOrCreate()
-    val sc: SparkContext = SparkContext.getOrCreate()
+      //.master("local[*]")
+      .appName("Spark Graphx App")
+      //.config("spark.master","spark://172.16.7.161:7077")
+      .getOrCreate()
+
+    val sc: SparkContext = sparkSS.sparkContext
+
 
     try{
       prepareGraph(graph)
@@ -119,7 +115,12 @@ object DemoGraph extends App {
       factory.close()
     }
 
-    LoadGraph.loadGraph(50000, sc)
     println("End creating the graph ...!")
+
+    LoadGraph.loadGraph(50000, sc)
+    sc.stop()
+
+    println("End Spark Load Graph ...!")
+
   }
 }
