@@ -15,13 +15,6 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-streaming" % "2.4.0" % "provided",
   "com.orientechnologies" % "orientdb-core" % "3.0.11",
   "com.orientechnologies" % "orientdb-graphdb" % "3.0.11",
-  "com.orientechnologies" % "orientdb-object" % "3.0.11",
-  "com.orientechnologies" % "orientdb-client" % "3.0.11",
-  "com.orientechnologies" % "orientdb-server" % "3.0.11",
-  "com.orientechnologies" % "orientdb-parent" % "3.0.11",
-  "com.orientechnologies" % "orientdb-tools" % "3.0.11",
-  "com.orientechnologies" % "orientdb-distributed" % "3.0.11",
-  "com.orientechnologies" % "orientdb-studio" % "3.0.11",
   "org.apache.hadoop" % "hadoop-hdfs" % "3.1.1",
   "com.tinkerpop.blueprints" % "blueprints-core" % "2.6.0",
   "com.tinkerpop.blueprints" % "blueprints-orient-graph" % "2.4.0" % "provided"

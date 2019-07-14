@@ -1,25 +1,39 @@
 
-import com.orientechnologies.orient.core.db.document.{ODatabaseDocumentTx}
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.id.{ORID, ORecordId}
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.{OConcurrentLegacyResultSet, OSQLSynchQuery}
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory
-import org.apache.spark.SparkContext
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.graphx.{Edge, Graph}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 
 object LoadGraph {
 
 
-  def loadGraph(pageSize: Int, sc: SparkContext): Graph[(Short,Float),Byte] = {
+  def loadGraph(pageSize: Int): Graph[(Short,Float),Byte] = {
 
     var graph: Graph[(Short,Float),Byte] = null
 
-    val uri: String = "plocal:/Users/zNedu/Desktop/orientdb-3.0.10/databases/New"
+    val uri: String = "remote:localhost/New"
+    //"plocal:/Users/zNedu/Desktop/orientdb-3.0.10/databases/New"
     //"remote:localhost/New"
 
     val factory: OrientGraphFactory = new OrientGraphFactory(uri)
     val ograph = factory.getTx
+
+    /*val sparkSS: SparkSession = SparkSession.builder()
+      //.master("local[*]")
+      .appName("Spark Graphx App")
+      .config("spark.master","spark://192.168.43.159:7077")
+      .getOrCreate()*/
+
+    val conf = new SparkConf()
+      .setMaster("spark://192.168.31.63:7077")
+      .setAppName("Spark Graphx App")
+
+    val sc = SparkContext.getOrCreate(conf)
 
     val db: ODatabaseDocumentTx = ograph.getRawGraph
 
@@ -45,9 +59,9 @@ object LoadGraph {
         resultSet = db.query(query, last)
       })
 
-      //vertexRDD = vertexRDD ++ sc.parallelize()
+      /*vertexRDD = vertexRDD ++ sc.parallelize()
 
-      /*while (!resultSet.isEmpty()){
+      while (!resultSet.isEmpty()){
         val last: ORID = resultSet.get(resultSet.size() - 1).getIdentity()
         val list = resultSet.map(v => (v[Long]("id"),(v[Short]("year"),1:Float))).toList
         vertexRDD = vertexRDD ++ sc.parallelize(list)
@@ -85,5 +99,11 @@ object LoadGraph {
       ograph.shutdown()
     }
     graph
+  }
+
+  def main(args: Array[String]): Unit = {
+    println("Orientdb Graph To Spark Graphx ...")
+    loadGraph(5000)
+    println("Spark end.")
   }
 }
